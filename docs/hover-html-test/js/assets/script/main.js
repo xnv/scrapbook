@@ -26,6 +26,8 @@ function main(param) {
                     frames: [5, 6, 7, 6]
                 });
                 var hoverableAco = hover.Converter.asHoverable(aco);
+                hoverableAco.onPointDown.add(function () { hoverableAco.scale(1.5); hoverableAco.modified(); });
+                hoverableAco.onPointUp.add(function () { hoverableAco.scale(1); hoverableAco.modified(); });
                 hoverableAco.hovered.add(function () {
                     aco.start();
                 });
@@ -41,6 +43,8 @@ function main(param) {
                     height: 20,
                     cssColor: "#000"
                 });
+                rect.onPointDown.add(function () { rect.scale(1.5); rect.modified(); });
+                rect.onPointUp.add(function () { rect.scale(1); rect.modified(); });
                 var label = new HoverableLabel_1.HoverableLabel({
                     scene: scene,
                     x: 65,
@@ -49,6 +53,8 @@ function main(param) {
                     fontSize: 20,
                     font: font
                 });
+                label.onPointDown.add(function () { label.scale(1.5); label.modified(); });
+                label.onPointUp.add(function () { label.scale(1); label.modified(); });
                 scene.append(aco);
                 scene.append(rect);
                 scene.append(label);
