@@ -1,0 +1,50 @@
+<!doctype html>
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #f8f8f8;
+}
+</style>
+
+<div style="position:relative; margin:1rem; height:300px; background:white;">
+  <div id="point" style="position:absolute; top:0; left:0; width:9px; height:9px; border:1px solid red; background:transparent; border-radius:5px"></div>
+  <div id="box" style="position:absolute; width:100%; height:100%; border-radius:0.5rem; border:1px dotted silver; display:flex; align-items:center; justify-content:center; user-select:none; color:gray;">
+    Move pen around here.
+  </div>
+</diV>
+
+<div style="margin:1rem;">
+  <input type="checkbox" id="chk-move" checked />
+  <label for="chk-move" style="user-select:none">Detect pointermove</label>
+</div>
+
+<div id="log" style="margin:1rem; padding:0.5rem; height:300px; background:#eee; border:1px solid silver; color:gray; overflow-y:scroll">
+</div>
+
+<script>
+const box = document.getElementById("box");
+const log = document.getElementById("log");
+const point = document.getElementById("point");
+const chkmove = document.getElementById("chk-move");
+
+let count = 0;
+function addLog(s) {
+  log.innerText = `${++count} [${(new Date()).toLocaleTimeString()}] ${s}\n${log.innerText}`.slice(0, 1000);
+}
+
+box.addEventListener("pointermove", ev => {
+  if (!chkmove.checked) return;
+  addLog(`pointermove (${ev.offsetX}, ${ev.offsetY}), pressure:${ev.pressure}`);
+  point.style.left = `${ev.offsetX - 4}px`;
+  point.style.top = `${ev.offsetY - 4}px`;
+});
+box.addEventListener("pointerenter", ev => { addLog(`pointerenter`); });
+box.addEventListener("pointercancel", ev => { addLog(`pointercancel`); });
+box.addEventListener("pointerout", ev => { addLog(`pointerout`); });
+box.addEventListener("pointerleave", ev => { addLog(`pointerleave`); });
+
+</script>
+
