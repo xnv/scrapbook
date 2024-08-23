@@ -1,0 +1,67 @@
+<!doctype html>
+<html style="width:100%; height:100%; font-size:0.8rem">
+<meta charset="utf-8">
+<meta
+  http-equiv="Content-Security-Policy"
+	content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; worker-src 'none';"
+/>
+<title>evalbox core</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<body style="width:100%; height:100%; margin:0;">
+
+<div style="display:flex; align-items:stretch; height:100%;">
+	<div style="flex:1 1 0; margin:0.8rem; display:flex; flex-flow:column nowrap; gap:0.8rem">
+		<textarea id="box" style="flex:1 1 0; border:1px solid #999; border-radius:4px; padding:0.5rem; font:16px monospace;"></textarea>
+	  <div style="display:flex; flex-flow:row-reverse nowrap">
+			<button style="padding:0.5rem 3rem; " onclick="run()">run</button>
+		</div>
+		<div id="out" style="flex:1 1 0; border:1px solid #ddd; border-radius:4px; white-space:pre; padding:0.5rem 0.3rem; font-size:0.8rem; overflow-y:auto"></div>
+	</div>
+</div>
+
+<script>
+const box = document.getElementById("box");
+const out = document.getElementById("out");
+
+box.addEventListener("keypress", ev => {
+	if (ev.shiftKey && ev.code === "Enter")
+		run();
+});
+
+function run() {
+	const src = box.value;
+
+	const res = document.createElement("div");
+	res.style = "flex:1 1 0; border:1px solid #e4e4e4; padding:0.2rem 0.5rem; border-radius:4px; background:#fafafa; margin-bottom:0.2rem; color:#444";
+	try {
+		const val = (0, eval)(src);
+		try {
+			res.innerText = JSON.stringify(val);
+		} catch {
+			res.innerText = val;
+		}
+		res.style.fontFamily = "monospace";
+	} catch (e) {
+		res.innerText = e.message;
+		res.style.background = "#fee";
+	}
+
+	const resContainer = document.createElement("div");
+	resContainer.style = "display:flex; flex-flow:row nowrap; align-items:center;";
+	const timestamp = document.createElement("div");
+	timestamp.style = "flex:0 0 0; font-size:0.7rem; color:#aaa; margin:0.4rem;";
+	timestamp.innerText = (new Date()).toLocaleString();
+
+	resContainer.appendChild(timestamp);
+	resContainer.appendChild(res);
+
+	out.insertBefore(resContainer, out.firstChild);
+}
+
+const querySrc = (new URLSearchParams(encodeURIComponent(location.search))).get("q");
+if (querySrc) {
+	box.value = querySrc;
+	run();
+}
+</script>
+
