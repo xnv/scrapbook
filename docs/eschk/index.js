@@ -50,7 +50,8 @@ function addTestcaseResult(name, succ, message) {
   return res;
 }
 
-function testcase(src, expected, comp = stricteq) {
+function testcase(src, expected, comp) {
+  comp = comp || stricteq;
   var source = dedent(src);
   try {
     var ret = (0, eval)(src);
