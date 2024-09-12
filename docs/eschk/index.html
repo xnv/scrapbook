@@ -85,11 +85,11 @@ testcases([
 
   "const",
   ["const x = 3; x", 3],
-  ["const x = 3; try { x = 4 } catch { 'err' }", "err"],
+  ["const x = 3; try { x = 4 } catch (_) { 'err' }", "err"],
 
   "let",
   ["let x = 3; x", 3],
-  ["let x = 3; try { x = 4 } catch { 'err' }", 4],
+  ["let x = 3; try { x = 4 } catch (_) { 'err' }", 4],
   ["(() => { let x = 3; if (true) { let x = 4; return x } return x })()", 4],
 
   "for-of",
