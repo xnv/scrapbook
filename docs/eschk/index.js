@@ -60,7 +60,7 @@ function testcase(src, expected, comp) {
       // Ugh! workaround Promise support. Needs to be reconsidered.
       var el = addTestcaseResult(source, true, "");
       ret.then(
-        v => {
+        function (v) {
           if (comp(expected, v)) {
             el.innerText = v;
           } else {
@@ -68,7 +68,7 @@ function testcase(src, expected, comp) {
             el.innerText = "Failed. Expected: " + expected + " / Received: " + ret;
           }
         },
-        e => {
+        function (e) {
           el.style.background = "#fee";
           el.innerText = e.message;
         }
