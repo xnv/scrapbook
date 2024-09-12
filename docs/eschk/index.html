@@ -117,7 +117,8 @@ testcases([
 
   "spread operator",
   ["var x = [1, 2]; [10, ...x, 8].reduce((a, b) => a + b, 0)", 21],
-  ["var x = { a: 2, b: 3 }; var y = { b: 5, ...x, a: 7 }; y.a + y.b", 10],
+  ["var x = ['a', 'b'], y = ['c']; y.push('d', ...x, 'e'); y.reduce((a, b) => a + b, '')", "cdabe"],
+  // ["var x = { a: 2, b: 3 }; var y = { b: 5, ...x, a: 7 }; y.a + y.b", 10], // ES2018
 
   "TypedArray",
   ["var a = new Uint8Array(4); a[0] = 3; a[0]", 3],
