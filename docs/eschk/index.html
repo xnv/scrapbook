@@ -3,46 +3,48 @@
 <style>
 
 h2 {
-	margin-top: 2em;
-	text-align: center;
+  margin-top: 2em;
+  text-align: center;
 }
 
 .res-container {
-	display: flex;
-	flex-flow: row nowrap;
-	align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
 }
 
 .res-container .name {
-	flex: 1 1 0;
-	font-size: 0.7rem;
-	margin: 0.4rem;
-	color: #aaa;
+  flex: 1 1 0;
+  font-size: 0.7rem;
+  margin: 0.4rem;
+  color: #aaa;
 }
 
 .res-container .res {
-	flex: 1 1 0;
-	border: 1px solid #e4e4e4;
-	padding: 0.2rem 0.5rem;
-	border-radius: 4px;
-	background: #fafafa;
-	margin-bottom: 0.2rem;
-	color: #444;
+  flex: 1 1 0;
+  border: 1px solid #e4e4e4;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: #fafafa;
+  margin-bottom: 0.2rem;
+  color: #444;
 }
 
 .footer {
-	font-size: 0.5rem;
-	color: silver;
-	margin-top: 1rem;
-	text-align: center;
+  font-size: 0.5rem;
+  color: silver;
+  margin-top: 1rem;
+  text-align: center;
 }
 </style>
 
 <h1> ECMAScript 262 Compatibility Test </h1>
 <p>
-  Features (except ES2015) are taken from <a href="https://github.com/tc39/proposals/blob/main/finished-proposals.md">
-  https://github.com/tc39/proposals/blob/main/finished-proposals.md
-  </a>
+  Features are taken from
+  <ul>
+    <li><a href="https://github.com/daumann/ECMAScript-new-features-list/tree/main">https://github.com/daumann/ECMAScript-new-features-list/tree/main</a>
+    <li><a href="https://github.com/tc39/proposals/blob/main/finished-proposals.md"> https://github.com/tc39/proposals/blob/main/finished-proposals.md</a>
+  </ul>
 </p>
 
 <div id="out"></div>
@@ -126,15 +128,55 @@ testcases([
   ["var a = new Uint16Array(4); a.fill(3); a.every(x => x === 3)", true],
 
   "Symbol",
-	["typeof Symbol('a') === 'symbol'", true],
-	["Symbol('a') === Symbol('a')", false],
-	["Symbol.for('a') === Symbol.for('a')", true],
+  ["typeof Symbol('a') === 'symbol'", true],
+  ["Symbol('a') === Symbol('a')", false],
+  ["Symbol.for('a') === Symbol.for('a')", true],
 
-	"Promise",
-	["(new Promise((res, rej) => res(3)))", 3],
-	["(new Promise((res, rej) => rej(3))).catch(v => v * v)", 9],
-	["Promise.resolve(8)", 8],
-	["Promise.all([Promise.resolve(3), Promise.resolve(5)]).then(a => a.reduce((a, b) => a + b, 0))", 8],
+  "Promise",
+  ["(new Promise((res, rej) => res(3)))", 3],
+  ["(new Promise((res, rej) => rej(3))).catch(v => v * v)", 9],
+  ["Promise.resolve(8)", 8],
+  ["Promise.all([Promise.resolve(3), Promise.resolve(5)]).then(a => a.reduce((a, b) => a + b, 0))", 8],
+
+  "Enhanced Object Literals",
+  ["var a = 1; ({ a, b: 3 }).a", 1],
+  ["var a = 1; ({ ['X' + a]: 3 }).X1", 3],
+
+  "Generator",
+  ["function* f(x) { yield 1; yield x; } var it = f(10); [it.next().value, it.next().value, it.next().done].join(',')", "1,10,true"],
+
+  "Unicode related",
+  ["'\u{20BB7}'.match(/./)[0].length", 1],
+  ["'\u{20BB7}'.match(/./u)[0].length", 2],
+  ["'\u{20BB7}'", "\uD842\uDFB7"],
+
+  "Proxy",
+  ["var target = {}, p = new Proxy(target, { get: function(r, n) { return 'prop:' + n; } }); p.bee", "prop:bee"],
+  ["var target = {}, p = new Proxy(target, { set: function(r, n, v) { r[n] = 'val:' + v; } }); p.bee = 3; target.bee", "val:3"],
+
+  "Math related",
+  ["Number.isInteger(Infinity)", false],
+  ["Number.isInteger(3.2)", false],
+  ["Number.isInteger(100)", true],
+  ["Number.isNaN(NaN)", true],
+  ["Number.isNaN(4)", false],
+  ["Math.acosh(3).toFixed(3)", "1.763"],
+  ["Math.hypot(3, 4)", 5],
+  ["Math.imul(Math.pow(2, 32) - 1, Math.pow(2, 32) - 2)", 2],
+
+  "String methods",
+  ["'abcde'.includes('cd')", true],
+  ["'abcde'.includes('dd')", false],
+  ["'ab'.repeat(3)", "ababab"],
+
+  "Array methods",
+  ["[0, 0, 0].fill(4, 1).join(',')", "0,4,4"],
+  ["JSON.stringify([{b:1}, {a:2}, {b:2}].find(x => x.b === 2))", '{"b":2}'],
+  ["[3, 6, 1].findIndex(x => x === 6)", 1],
+
+  "Number literals",
+  ["0b11010001", 209],
+  ["0o767", 503],
 
   "# ES2016",
 
@@ -147,9 +189,23 @@ testcases([
   ["2 ** 3", 8],
   ["6 ** 3", 216],
 
-	"# ES2017",
+  "# ES2017",
 
-	"Object.values / Object.entries",
-	["Object.values({ a: 3, x: 5, c: 7 }).reduce((a, b) => a + b, 0)", 15],
+  "Object.values / Object.entries",
+  ["Object.values({ a: 3, x: 5, c: 7 }).reduce((a, b) => a + b, 0)", 15],
+
+  "Async",
+  ["async function f(x) { return await (x + x); } f(4)", 8],
+
+  "getOwnPropertyDescriptors()",
+  ["var o = { prop1: 'foo' }; var d = Object.getOwnPropertyDescriptors(o).prop1; d.writable", true],
+  ["var o = { prop1: 'foo' }; var d = Object.getOwnPropertyDescriptors(o).prop1; d.enumerable", true],
+  ["var o = { prop1: 'foo' }; var d = Object.getOwnPropertyDescriptors(o).prop1; d.configurable", true],
+  ["var o = { prop1: 'foo' }; var d = Object.getOwnPropertyDescriptors(o).prop1; d.value", "foo"],
+
+  "Trailing comma",
+  ["function f(x, y,) { return Math.pow(x, y,) }; f(3, 4)", 81],
+  ["var f = (x, y,) => x + y; f(3, 4)", 7],
+
 ]);
 </script>
