@@ -108,6 +108,13 @@ testcases([
   ["var s = new Set(); s.add(4); s.add(8); s.has(4)", true],
   ["var s = new Set(); s.add(4); s.add(8); s.has(6)", false],
 
+	"WeakMap",
+	["var o = {}, wm = new WeakMap(); wm.set(o, { foo: 17 }); [wm.get(o).foo, wm.has(o), wm.has({})].join(',')", "17,true,false"],
+
+	"WeakSet",
+	["var o = {}, ws = new WeakSet(); ws.add(o); [ws.has(o), ws.has({})].join(',')", "true,false"],
+	["var o = {}, ws = new WeakSet(); ws.add(o); ws.delete(o); ws.has(o)", false],
+
   "Array.from, Array.of",
   ["function f() { return Array.from(arguments) } f(1,2,3).reduce((a, b) => a + b, 0)", 6],
   ["Array.of(1,2,3).reduce((a, b) => a + b, 0)", 6],
@@ -177,6 +184,9 @@ testcases([
   "Number literals",
   ["0b11010001", 209],
   ["0o767", 503],
+
+  "Subclassing builtins",
+	["class MyArr extends Array { foo() { return this.length--; } } var a = new MyArr(2); a[0] = a[1] = 100; a.foo(); [a.length, a[1] === undefined].join(',')", "1,true"],
 
   "# ES2016",
 
